@@ -287,27 +287,26 @@ DB_PASSWORD=votre_mot_de_passe_securise
 
 ## 🐳 Déploiement sur Dokploy
 
-### 1. Créer un nouveau projet sur Dokploy
+> **⚠️ Important** : Consultez le guide détaillé [DEPLOY_DOKPLOY.md](./DEPLOY_DOKPLOY.md) pour les instructions complètes et le dépannage.
 
-### 2. Connecter votre repository GitHub
+### Configuration rapide
 
-### 3. Configurer les variables d'environnement
+1. **Créer une application Docker Compose** (PAS Dockerfile)
+2. Connecter le repository GitHub `Maxymou/iEEL-App`
+3. Configurer la variable d'environnement :
+   ```
+   DB_PASSWORD=votre_mot_de_passe_securise
+   ```
+4. Déployer
 
-Ajouter dans Dokploy :
-```
-DB_PASSWORD=votre_mot_de_passe_securise
-```
+### Après déploiement
 
-### 4. Déployer
-
-Dokploy détectera automatiquement le `docker-compose.yml` et déploiera l'application.
-
-### 5. Seed initial (optionnel)
-
-Connectez-vous au conteneur backend et exécutez :
+Seed des données de test (optionnel) :
 ```bash
-npm run seed
+docker exec -it ieel-backend npm run seed
 ```
+
+**En cas d'erreur** : Voir [DEPLOY_DOKPLOY.md](./DEPLOY_DOKPLOY.md) pour les solutions détaillées.
 
 ## 🧪 Tests et Développement
 

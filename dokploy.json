@@ -1,0 +1,10 @@
+{
+  "name": "ieel",
+  "type": "docker-compose",
+  "compose": {
+    "file": "docker-compose.yml"
+  },
+  "env": {
+    "DB_PASSWORD": "${DB_PASSWORD}"
+  }
+}
