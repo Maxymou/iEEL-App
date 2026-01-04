@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # Base de données PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: ieel-postgres
+    environment:
+      POSTGRES_DB: ieel
+      POSTGRES_USER: ieel_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-ieel_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ieel_user -d ieel"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ieel-network
+
+  # Backend API Node.js
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ieel-backend
+    environment:
+      DATABASE_URL: postgresql://ieel_user:${DB_PASSWORD:-ieel_password}@postgres:5432/ieel
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ieel-network
+    restart: unless-stopped
+
+  # Frontend React + Nginx
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ieel-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - ieel-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  ieel-network:
+    driver: bridge
