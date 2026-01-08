@@ -287,25 +287,50 @@ DB_PASSWORD=votre_mot_de_passe_securise
 
 ## 🐳 Déploiement sur Dokploy
 
-### 1. Créer un nouveau projet sur Dokploy
+### 🚀 Démarrage Rapide
 
-### 2. Connecter votre repository GitHub
+Dokploy nécessite de **déployer 3 applications séparées** :
 
-### 3. Configurer les variables d'environnement
+1. **PostgreSQL** (Database)
+2. **Backend** (dockerfile : `backend/Dockerfile`)
+3. **Frontend** (dockerfile : `frontend/Dockerfile`)
 
-Ajouter dans Dokploy :
+**📖 Guides disponibles :**
+- **[QUICK_START_DOKPLOY.md](./QUICK_START_DOKPLOY.md)** ← Commencez par ici ! ⭐
+- [DEPLOY_DOKPLOY_SEPARATE.md](./DEPLOY_DOKPLOY_SEPARATE.md) - Guide détaillé complet
+- [DEPLOY_DOKPLOY.md](./DEPLOY_DOKPLOY.md) - Alternatives et dépannage
+
+### Configuration rapide (3 apps)
+
+**1. PostgreSQL**
+```yaml
+Type: PostgreSQL Database
+Database: ieel
+User: ieel_user
+Password: [VOTRE_PASSWORD]
 ```
-DB_PASSWORD=votre_mot_de_passe_securise
+
+**2. Backend**
+```yaml
+Build Type: dockerfile
+Path: backend/Dockerfile
+Env: DATABASE_URL=postgresql://ieel_user:[PASSWORD]@ieel-postgres:5432/ieel
 ```
 
-### 4. Déployer
+**3. Frontend**
+```yaml
+Build Type: dockerfile
+Path: frontend/Dockerfile
+Env: VITE_API_URL=http://ieel-backend:3000/api
+```
 
-Dokploy détectera automatiquement le `docker-compose.yml` et déploiera l'application.
+### Après déploiement
 
-### 5. Seed initial (optionnel)
-
-Connectez-vous au conteneur backend et exécutez :
+Créer les tables et seed (optionnel) :
 ```bash
+docker exec -it ieel-backend sh
+apk add postgresql-client
+psql $DATABASE_URL < db/schema.sql
 npm run seed
 ```
 
