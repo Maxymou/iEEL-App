@@ -117,9 +117,9 @@ async function initDatabase() {
 }
 
 // Démarrage du serveur
-app.listen(PORT, async () => {
+app.listen(PORT, '0.0.0.0', async () => {
   console.log('\n🚀 Serveur iEEL démarré');
-  console.log(`📍 URL: http://localhost:${PORT}`);
+  console.log(`📍 URL: http://0.0.0.0:${PORT}`);
   console.log(`🌍 Environnement: ${process.env.NODE_ENV || 'development'}`);
   console.log(`📁 Base de données: ${process.env.DATABASE_URL ? 'Configurée' : 'Non configurée'}\n`);
 
