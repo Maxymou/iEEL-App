@@ -285,7 +285,21 @@ VITE_API_URL=http://localhost:3000/api
 DB_PASSWORD=votre_mot_de_passe_securise
 ```
 
-## 🐳 Déploiement sur Dokploy
+## 🐳 Déploiement
+
+### 📚 Documentation de Déploiement
+
+#### Production (Recommandé)
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** ⭐ **Architecture de production complète**
+  - Architecture réseau avec Nginx Proxy Manager + Traefik
+  - Résolution du problème 502 Bad Gateway
+  - Configuration détaillée des services
+  - Troubleshooting complet
+
+#### Guides Dokploy
+- **[QUICK_START_DOKPLOY.md](./QUICK_START_DOKPLOY.md)** - Démarrage rapide
+- [DEPLOY_DOKPLOY_SEPARATE.md](./DEPLOY_DOKPLOY_SEPARATE.md) - Guide détaillé complet
+- [DEPLOY_DOKPLOY.md](./DEPLOY_DOKPLOY.md) - Alternatives et dépannage
 
 ### 🚀 Démarrage Rapide
 
@@ -294,11 +308,6 @@ Dokploy nécessite de **déployer 3 applications séparées** :
 1. **PostgreSQL** (Database)
 2. **Backend** (dockerfile : `backend/Dockerfile`)
 3. **Frontend** (dockerfile : `frontend/Dockerfile`)
-
-**📖 Guides disponibles :**
-- **[QUICK_START_DOKPLOY.md](./QUICK_START_DOKPLOY.md)** ← Commencez par ici ! ⭐
-- [DEPLOY_DOKPLOY_SEPARATE.md](./DEPLOY_DOKPLOY_SEPARATE.md) - Guide détaillé complet
-- [DEPLOY_DOKPLOY.md](./DEPLOY_DOKPLOY.md) - Alternatives et dépannage
 
 ### Configuration rapide (3 apps)
 
