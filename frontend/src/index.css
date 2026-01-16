@@ -12,8 +12,10 @@ body {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #ffffff;
-  color: #1D1D1F;
+  background-color: #020617;
+  color: #E5E7EB;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 /* Animation pour le spinner */
@@ -27,9 +29,9 @@ body {
   animation: spin 1s linear infinite;
 }
 
-/* Transitions douces */
-a, button {
-  transition: all 0.2s ease-in-out;
+/* Transitions douces - 150-200ms ease-out */
+a, button, input, textarea, select {
+  transition: all 150ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 /* Scroll smooth */
@@ -37,8 +39,57 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Focus visible pour l'accessibilité */
+/* Focus visible pour l'accessibilité avec primary color */
 :focus-visible {
-  outline: 2px solid #0071E3;
+  outline: 2px solid #38BDF8;
   outline-offset: 2px;
+}
+
+/* Input autofill dark mode fix */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #0F172A inset !important;
+  -webkit-text-fill-color: #E5E7EB !important;
+}
+
+/* Scrollbar dark mode */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0F172A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Typography utilities */
+.text-kpi {
+  font-size: 2.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+  .text-kpi {
+    font-size: 3rem;
+  }
+}
+
+/* Custom utilities */
+@layer utilities {
+  .transition-out {
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
 }

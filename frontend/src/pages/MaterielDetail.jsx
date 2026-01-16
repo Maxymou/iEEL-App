@@ -56,8 +56,8 @@ const MaterielDetail = () => {
       <Layout>
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
-            <div className="w-16 h-16 border-4 border-apple-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-apple-text-secondary">Chargement...</p>
+            <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-text-muted">Chargement...</p>
           </div>
         </div>
       </Layout>
@@ -67,12 +67,18 @@ const MaterielDetail = () => {
   if (error || !materiel) {
     return (
       <Layout>
-        <div className="text-center py-12">
-          <p className="text-red-500">{error || 'Matériel non trouvé'}</p>
+        <div className="bg-bg-surface border border-border-default rounded-lg p-12 text-center">
+          <svg className="w-16 h-16 text-danger mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <p className="text-danger text-lg mb-4">{error || 'Matériel non trouvé'}</p>
           <Link
             to="/"
-            className="mt-4 inline-block px-6 py-2 bg-apple-blue text-white rounded-lg hover:bg-opacity-90 transition-all"
+            className="inline-flex items-center gap-2 h-11 px-6 bg-primary text-bg-primary rounded-lg font-medium hover:bg-primary-hover transition-all duration-150"
           >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
             Retour à l'accueil
           </Link>
         </div>
@@ -82,34 +88,40 @@ const MaterielDetail = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto space-y-8">
+      <div className="max-w-4xl mx-auto space-y-6">
         {/* Breadcrumb */}
-        <div className="flex items-center space-x-2 text-sm font-medium">
-          <Link to="/" className="text-apple-blue hover:underline">
+        <div className="flex items-center gap-2 text-sm text-text-muted">
+          <Link to="/" className="hover:text-primary transition-colors duration-150">
             Accueil
           </Link>
-          <span className="text-apple-text-secondary">›</span>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
           <Link
             to={`/category/${materiel.category_id}`}
-            className="text-apple-blue hover:underline"
+            className="hover:text-primary transition-colors duration-150"
           >
             {materiel.category_nom}
           </Link>
-          <span className="text-apple-text-secondary">›</span>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
           <Link
             to={`/sous-category/${materiel.sous_category_id}`}
-            className="text-apple-blue hover:underline"
+            className="hover:text-primary transition-colors duration-150"
           >
             {materiel.sous_category_nom}
           </Link>
-          <span className="text-apple-text-secondary">›</span>
-          <span className="text-apple-text-secondary">{materiel.nom}</span>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+          <span className="text-text-main">{materiel.nom}</span>
         </div>
 
         {/* Contenu principal */}
         {isEditing ? (
-          <div className="bg-white border border-apple-border rounded-xl p-8">
-            <h2 className="text-2xl font-semibold text-apple-text mb-6">
+          <div>
+            <h2 className="text-lg font-semibold text-text-main mb-4">
               Modifier le matériel
             </h2>
             <MaterielForm
@@ -119,84 +131,102 @@ const MaterielDetail = () => {
             />
           </div>
         ) : (
-          <div className="bg-white border border-apple-border rounded-xl p-8">
+          <div className="bg-bg-surface border border-border-default rounded-lg p-6">
             {/* Titre et actions */}
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
-              <h1 className="text-4xl font-bold text-apple-text">{materiel.nom}</h1>
-              <div className="flex items-center space-x-3">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6 pb-6 border-b border-border-default">
+              <h1 className="text-2xl font-semibold text-text-main">{materiel.nom}</h1>
+              <div className="flex items-center gap-3">
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="px-6 py-2 bg-apple-blue text-white rounded-lg hover:bg-opacity-90 transition-all font-medium"
+                  className="h-11 px-5 bg-bg-elevated text-text-main border border-border-default rounded-lg font-medium hover:border-primary/50 hover:text-primary transition-all duration-150 flex items-center gap-2"
                 >
-                  ✏️ Modifier
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  Modifier
                 </button>
                 <button
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-opacity-90 transition-all font-medium"
+                  className="h-11 px-5 bg-danger text-white rounded-lg font-medium hover:bg-danger-hover transition-all duration-150 flex items-center gap-2"
                 >
-                  🗑️ Supprimer
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  Supprimer
                 </button>
               </div>
             </div>
 
-            {/* Détails */}
+            {/* Détails techniques */}
             <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Section */}
-                {materiel.section && (
-                  <div className="bg-apple-gray rounded-lg p-4">
-                    <p className="text-sm text-apple-text-secondary mb-1">Section</p>
-                    <p className="text-lg font-semibold text-apple-text">{materiel.section}</p>
+              {(materiel.section || materiel.diametre || materiel.poids_au_metre) && (
+                <div>
+                  <h3 className="text-sm font-semibold text-text-main mb-3 uppercase tracking-wider">
+                    Spécifications techniques
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {materiel.section && (
+                      <div className="bg-bg-elevated rounded-lg p-4 border border-border-default">
+                        <p className="text-xs text-text-subtle mb-1">Section</p>
+                        <p className="text-lg font-semibold text-text-main">{materiel.section}</p>
+                      </div>
+                    )}
+                    {materiel.diametre && (
+                      <div className="bg-bg-elevated rounded-lg p-4 border border-border-default">
+                        <p className="text-xs text-text-subtle mb-1">Diamètre</p>
+                        <p className="text-lg font-semibold text-text-main">{materiel.diametre}</p>
+                      </div>
+                    )}
+                    {materiel.poids_au_metre && (
+                      <div className="bg-bg-elevated rounded-lg p-4 border border-border-default">
+                        <p className="text-xs text-text-subtle mb-1">Poids au mètre</p>
+                        <p className="text-lg font-semibold text-text-main">
+                          {materiel.poids_au_metre} kg/m
+                        </p>
+                      </div>
+                    )}
                   </div>
-                )}
-
-                {/* Diamètre */}
-                {materiel.diametre && (
-                  <div className="bg-apple-gray rounded-lg p-4">
-                    <p className="text-sm text-apple-text-secondary mb-1">Diamètre</p>
-                    <p className="text-lg font-semibold text-apple-text">{materiel.diametre}</p>
-                  </div>
-                )}
-
-                {/* Poids au mètre */}
-                {materiel.poids_au_metre && (
-                  <div className="bg-apple-gray rounded-lg p-4">
-                    <p className="text-sm text-apple-text-secondary mb-1">Poids au mètre</p>
-                    <p className="text-lg font-semibold text-apple-text">
-                      {materiel.poids_au_metre} kg/m
-                    </p>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
 
               {/* Catégorisation */}
-              <div className="border-t border-apple-border pt-6">
-                <h3 className="text-lg font-semibold text-apple-text mb-4">Catégorisation</h3>
+              <div className="pt-6 border-t border-border-default">
+                <h3 className="text-sm font-semibold text-text-main mb-3 uppercase tracking-wider">
+                  Catégorisation
+                </h3>
                 <div className="space-y-2">
-                  <p className="text-apple-text-secondary">
-                    <span className="font-medium">Catégorie:</span>{' '}
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-text-muted">Catégorie:</span>
                     <Link
                       to={`/category/${materiel.category_id}`}
-                      className="text-apple-blue hover:underline"
+                      className="text-primary hover:underline font-medium"
                     >
                       {materiel.category_nom}
                     </Link>
-                  </p>
-                  <p className="text-apple-text-secondary">
-                    <span className="font-medium">Sous-catégorie:</span>{' '}
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-text-muted">Sous-catégorie:</span>
                     <Link
                       to={`/sous-category/${materiel.sous_category_id}`}
-                      className="text-apple-blue hover:underline"
+                      className="text-primary hover:underline font-medium"
                     >
                       {materiel.sous_category_nom}
                     </Link>
-                  </p>
+                  </div>
                 </div>
               </div>
 
               {/* Date de création */}
-              <div className="text-sm text-apple-text-secondary">
-                Créé le {new Date(materiel.created_at).toLocaleDateString('fr-FR')}
+              <div className="pt-4 border-t border-border-default">
+                <p className="text-xs text-text-subtle">
+                  Créé le {new Date(materiel.created_at).toLocaleDateString('fr-FR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </p>
               </div>
             </div>
           </div>
@@ -204,24 +234,33 @@ const MaterielDetail = () => {
 
         {/* Modal de confirmation de suppression */}
         {showDeleteConfirm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl p-8 max-w-md w-full">
-              <h3 className="text-2xl font-bold text-apple-text mb-4">
-                Confirmer la suppression
-              </h3>
-              <p className="text-apple-text-secondary mb-6">
-                Êtes-vous sûr de vouloir supprimer "{materiel.nom}" ? Cette action est irréversible.
-              </p>
-              <div className="flex items-center space-x-4">
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-bg-surface border border-border-default rounded-lg p-8 max-w-md w-full">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="w-12 h-12 rounded-full bg-danger/10 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-6 h-6 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-semibold text-text-main mb-2">
+                    Confirmer la suppression
+                  </h3>
+                  <p className="text-text-muted text-sm">
+                    Êtes-vous sûr de vouloir supprimer <span className="font-medium text-text-main">"{materiel.nom}"</span> ? Cette action est irréversible.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
                 <button
                   onClick={handleDelete}
-                  className="flex-1 bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-opacity-90 transition-all font-medium"
+                  className="flex-1 h-11 bg-danger text-white px-6 rounded-lg font-medium hover:bg-danger-hover transition-all duration-150"
                 >
                   Supprimer
                 </button>
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="flex-1 bg-apple-gray text-apple-text px-6 py-3 rounded-lg hover:bg-opacity-80 transition-all font-medium"
+                  className="flex-1 h-11 bg-bg-elevated text-text-main border border-border-default px-6 rounded-lg font-medium hover:bg-bg-elevated/70 hover:border-border-subtle transition-all duration-150"
                 >
                   Annuler
                 </button>
