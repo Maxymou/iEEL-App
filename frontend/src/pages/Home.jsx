@@ -46,8 +46,8 @@ const Home = () => {
       <Layout>
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
-            <div className="w-16 h-16 border-4 border-apple-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-apple-text-secondary">Chargement...</p>
+            <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-text-muted">Chargement des catégories...</p>
           </div>
         </div>
       </Layout>
@@ -57,11 +57,14 @@ const Home = () => {
   if (error) {
     return (
       <Layout>
-        <div className="text-center py-12">
-          <p className="text-red-500">{error}</p>
+        <div className="bg-bg-surface border border-border-default rounded-lg p-12 text-center">
+          <svg className="w-16 h-16 text-danger mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <p className="text-danger text-lg mb-4">{error}</p>
           <button
             onClick={fetchCategories}
-            className="mt-4 px-6 py-2 bg-apple-blue text-white rounded-lg hover:bg-opacity-90 transition-all"
+            className="h-11 px-6 bg-primary text-bg-primary rounded-lg font-medium hover:bg-primary-hover transition-all duration-150"
           >
             Réessayer
           </button>
@@ -72,30 +75,44 @@ const Home = () => {
 
   return (
     <Layout>
-      <div className="space-y-8">
-        {/* Header avec bouton d'export */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-4xl font-bold text-apple-text">Inventaire iEEL</h1>
-            <p className="mt-2 text-apple-text-secondary">
-              Gestion de matériel électrique - {categories.length} catégorie{categories.length > 1 ? 's' : ''}
-            </p>
+      <div className="space-y-6">
+        {/* Zone KPI */}
+        <div className="bg-bg-surface border border-border-default rounded-lg p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <h1 className="text-2xl font-semibold text-text-main mb-1">Inventaire iEEL</h1>
+              <p className="text-text-muted text-sm mb-6">
+                Gestion de matériel électrique
+              </p>
+              <div className="flex items-baseline gap-3">
+                <div className="text-kpi text-primary">{categories.length}</div>
+                <div className="text-text-muted">
+                  catégorie{categories.length > 1 ? 's' : ''}
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={handleExport}
+              className="h-11 px-5 bg-bg-elevated text-text-main border border-border-default rounded-lg font-medium hover:border-primary/50 hover:text-primary transition-all duration-150 flex items-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3 3m0 0l-3-3m3 3V10" />
+              </svg>
+              Exporter CSV
+            </button>
           </div>
-          <button
-            onClick={handleExport}
-            className="px-6 py-3 bg-apple-blue text-white rounded-lg hover:shadow-md hover:bg-opacity-90 transition-all font-medium"
-          >
-            📥 Exporter CSV
-          </button>
         </div>
 
         {/* Grille de catégories */}
         {categories.length === 0 ? (
-          <div className="text-center py-12 bg-apple-gray rounded-xl">
-            <p className="text-apple-text-secondary">Aucune catégorie disponible</p>
+          <div className="bg-bg-surface border border-border-default rounded-lg p-12 text-center">
+            <svg className="w-16 h-16 text-text-subtle mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+            <p className="text-text-muted text-base">Aucune catégorie disponible</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="space-y-4">
             {categories.map((category) => (
               <CategoryCard key={category.id} category={category} />
             ))}

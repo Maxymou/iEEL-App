@@ -55,11 +55,11 @@ const MaterielForm = ({ initialData = {}, onSubmit, onCancel }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="bg-bg-surface border border-border-default rounded-lg p-6 space-y-5">
       {/* Nom */}
       <div>
-        <label htmlFor="nom" className="block text-sm font-medium text-apple-text mb-2">
-          Nom du matériel *
+        <label htmlFor="nom" className="block text-sm font-medium text-text-main mb-2">
+          Nom du matériel <span className="text-danger">*</span>
         </label>
         <input
           type="text"
@@ -67,19 +67,26 @@ const MaterielForm = ({ initialData = {}, onSubmit, onCancel }) => {
           name="nom"
           value={formData.nom}
           onChange={handleChange}
-          className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
+          className={`w-full h-11 px-4 bg-bg-elevated border rounded-lg text-text-main placeholder-text-subtle focus:outline-none focus:ring-2 transition-all duration-150 ${
             errors.nom
-              ? 'border-red-500 focus:ring-red-200'
-              : 'border-apple-border focus:ring-apple-blue focus:border-apple-blue'
+              ? 'border-danger focus:ring-danger/20 focus:border-danger'
+              : 'border-border-default focus:ring-primary/20 focus:border-primary'
           }`}
           placeholder="Ex: Câble HTA 20kV"
         />
-        {errors.nom && <p className="mt-1 text-sm text-red-500">{errors.nom}</p>}
+        {errors.nom && (
+          <p className="mt-1.5 text-sm text-danger flex items-center gap-1.5">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            {errors.nom}
+          </p>
+        )}
       </div>
 
       {/* Section */}
       <div>
-        <label htmlFor="section" className="block text-sm font-medium text-apple-text mb-2">
+        <label htmlFor="section" className="block text-sm font-medium text-text-main mb-2">
           Section
         </label>
         <input
@@ -88,14 +95,14 @@ const MaterielForm = ({ initialData = {}, onSubmit, onCancel }) => {
           name="section"
           value={formData.section}
           onChange={handleChange}
-          className="w-full px-4 py-3 border border-apple-border rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-apple-blue transition-all"
+          className="w-full h-11 px-4 bg-bg-elevated border border-border-default rounded-lg text-text-main placeholder-text-subtle focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-150"
           placeholder="Ex: 240 mm²"
         />
       </div>
 
       {/* Diamètre */}
       <div>
-        <label htmlFor="diametre" className="block text-sm font-medium text-apple-text mb-2">
+        <label htmlFor="diametre" className="block text-sm font-medium text-text-main mb-2">
           Diamètre
         </label>
         <input
@@ -104,14 +111,14 @@ const MaterielForm = ({ initialData = {}, onSubmit, onCancel }) => {
           name="diametre"
           value={formData.diametre}
           onChange={handleChange}
-          className="w-full px-4 py-3 border border-apple-border rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-apple-blue transition-all"
+          className="w-full h-11 px-4 bg-bg-elevated border border-border-default rounded-lg text-text-main placeholder-text-subtle focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-150"
           placeholder="Ex: 24 mm"
         />
       </div>
 
       {/* Poids au mètre */}
       <div>
-        <label htmlFor="poids_au_metre" className="block text-sm font-medium text-apple-text mb-2">
+        <label htmlFor="poids_au_metre" className="block text-sm font-medium text-text-main mb-2">
           Poids au mètre (kg)
         </label>
         <input
@@ -122,23 +129,23 @@ const MaterielForm = ({ initialData = {}, onSubmit, onCancel }) => {
           onChange={handleChange}
           step="0.01"
           min="0"
-          className="w-full px-4 py-3 border border-apple-border rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-apple-blue transition-all"
+          className="w-full h-11 px-4 bg-bg-elevated border border-border-default rounded-lg text-text-main placeholder-text-subtle focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-150"
           placeholder="Ex: 1.85"
         />
       </div>
 
       {/* Boutons */}
-      <div className="flex items-center space-x-4 pt-4">
+      <div className="flex items-center gap-3 pt-2">
         <button
           type="submit"
-          className="flex-1 bg-apple-blue text-white px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-all hover:shadow-md"
+          className="flex-1 h-11 bg-primary text-bg-primary px-6 rounded-lg font-medium hover:bg-primary-hover focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all duration-150"
         >
           {initialData.id ? 'Mettre à jour' : 'Créer'}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 bg-apple-gray text-apple-text px-6 py-3 rounded-lg font-medium hover:bg-opacity-80 transition-all"
+          className="flex-1 h-11 bg-bg-elevated text-text-main border border-border-default px-6 rounded-lg font-medium hover:bg-bg-elevated/70 hover:border-border-subtle focus:ring-2 focus:ring-border-subtle/20 focus:outline-none transition-all duration-150"
         >
           Annuler
         </button>
