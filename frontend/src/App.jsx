@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import SubCategories from './pages/SubCategories';
 import Materiels from './pages/Materiels';
 import MaterielDetail from './pages/MaterielDetail';
+import GridDemo from './pages/GridDemo';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/category/:id" element={<SubCategories />} />
         <Route path="/sous-category/:id" element={<Materiels />} />
         <Route path="/materiel/:id" element={<MaterielDetail />} />
+        <Route path="/grid-demo" element={<GridDemo />} />
       </Routes>
     </Router>
   );

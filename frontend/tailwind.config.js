@@ -43,6 +43,19 @@ export default {
       transitionTimingFunction: {
         'out': 'cubic-bezier(0, 0, 0.2, 1)',
       },
+      // Grid System tokens
+      spacing: {
+        'grid-gutter': '20px',
+        'grid-margin': '20px',
+      },
+      gridTemplateColumns: {
+        // Mobile: 4 colonnes
+        'grid-mobile': 'repeat(4, 1fr)',
+        // Tablet: 8 colonnes
+        'grid-tablet': 'repeat(8, 1fr)',
+        // Desktop: 12 colonnes
+        'grid-desktop': 'repeat(12, 1fr)',
+      },
     },
   },
   plugins: [],

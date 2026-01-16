@@ -93,3 +93,85 @@ input:-webkit-autofill:active {
     transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
   }
 }
+
+/* =============================================================================
+   GRID SYSTEM - Design System Foundation
+   ============================================================================= */
+
+/**
+ * Variables CSS pour le Grid System
+ * Permet une customisation facile et la compatibilité avec les thèmes futurs
+ */
+:root {
+  /* Colonnes par breakpoint */
+  --grid-columns-mobile: 4;
+  --grid-columns-tablet: 8;
+  --grid-columns-desktop: 12;
+
+  /* Espacements */
+  --grid-gutter: 20px;
+  --grid-margin: 20px;
+
+  /* Debug overlay (dark mode) */
+  --grid-debug-bg: rgba(217, 255, 66, 0.05);
+  --grid-debug-line: rgba(217, 255, 66, 0.2);
+}
+
+/**
+ * Variables pour futur thème clair
+ * Ajoutez [data-theme="light"] sur <html> pour activer
+ */
+[data-theme="light"] {
+  --grid-debug-bg: rgba(0, 0, 0, 0.03);
+  --grid-debug-line: rgba(0, 0, 0, 0.1);
+}
+
+/**
+ * Debug mode - affiche la grille en overlay
+ * Activé uniquement en dev avec l'attribut data-debug="true"
+ */
+[data-grid-debug="true"] .grid-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: var(--grid-margin);
+  right: var(--grid-margin);
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+
+  /* Grille mobile (4 colonnes) */
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--grid-debug-bg) 0,
+    var(--grid-debug-bg) calc((100% - (var(--grid-gutter) * 3)) / 4),
+    var(--grid-debug-line) calc((100% - (var(--grid-gutter) * 3)) / 4),
+    var(--grid-debug-line) calc((100% - (var(--grid-gutter) * 3)) / 4 + var(--grid-gutter))
+  );
+}
+
+/* Debug mode - Tablet (8 colonnes) */
+@media (min-width: 768px) {
+  [data-grid-debug="true"] .grid-container::before {
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--grid-debug-bg) 0,
+      var(--grid-debug-bg) calc((100% - (var(--grid-gutter) * 7)) / 8),
+      var(--grid-debug-line) calc((100% - (var(--grid-gutter) * 7)) / 8),
+      var(--grid-debug-line) calc((100% - (var(--grid-gutter) * 7)) / 8 + var(--grid-gutter))
+    );
+  }
+}
+
+/* Debug mode - Desktop (12 colonnes) */
+@media (min-width: 1024px) {
+  [data-grid-debug="true"] .grid-container::before {
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--grid-debug-bg) 0,
+      var(--grid-debug-bg) calc((100% - (var(--grid-gutter) * 11)) / 12),
+      var(--grid-debug-line) calc((100% - (var(--grid-gutter) * 11)) / 12),
+      var(--grid-debug-line) calc((100% - (var(--grid-gutter) * 11)) / 12 + var(--grid-gutter))
+    );
+  }
+}
