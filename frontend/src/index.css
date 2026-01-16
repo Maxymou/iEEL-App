@@ -39,9 +39,9 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Focus visible pour l'accessibilité avec primary color */
+/* Focus visible pour l'accessibilité avec primary color (vert néon) */
 :focus-visible {
-  outline: 2px solid #38BDF8;
+  outline: 2px solid #A3E635;
   outline-offset: 2px;
 }
 
@@ -50,7 +50,7 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px #0F172A inset !important;
+  -webkit-box-shadow: 0 0 0 30px #0B1220 inset !important;
   -webkit-text-fill-color: #E5E7EB !important;
 }
 
@@ -61,7 +61,7 @@ input:-webkit-autofill:active {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0F172A;
+  background: #0B1220;
 }
 
 ::-webkit-scrollbar-thumb {
