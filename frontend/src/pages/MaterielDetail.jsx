@@ -14,7 +14,32 @@ const MaterielDetail = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
+    // 🔒 Flag pour éviter setState après unmount (memory leak)
+    let mounted = true;
+
+    const fetchMateriel = async () => {
+      try {
+        if (mounted) setLoading(true);
+        const response = await getMateriel(id);
+        if (mounted) {
+          setMateriel(response.data);
+        }
+      } catch (err) {
+        console.error('Erreur lors du chargement:', err);
+        if (mounted) {
+          setError('Impossible de charger le matériel');
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
     fetchMateriel();
+
+    // Cleanup: marquer le composant comme unmounted
+    return () => {
+      mounted = false;
+    };
   }, [id]);
 
   const fetchMateriel = async () => {

@@ -8,7 +8,9 @@ services:
     environment:
       POSTGRES_DB: ieel
       POSTGRES_USER: ieel_user
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-ieel_password}
+      # 🔒 SÉCURITÉ : Définir DB_PASSWORD dans .env (obligatoire pour la production)
+      # ATTENTION : Ne jamais utiliser le mot de passe par défaut en production !
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?ERREUR - DB_PASSWORD non défini dans .env}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
@@ -29,9 +31,10 @@ services:
       dockerfile: Dockerfile
     container_name: ieel-backend
     environment:
-      DATABASE_URL: postgresql://ieel_user:${DB_PASSWORD:-ieel_password}@postgres:5432/ieel
+      DATABASE_URL: postgresql://ieel_user:${DB_PASSWORD:?ERREUR - DB_PASSWORD non défini}@postgres:5432/ieel
       NODE_ENV: production
       PORT: 3000
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:80}
     ports:
       - "3000:3000"
     depends_on:

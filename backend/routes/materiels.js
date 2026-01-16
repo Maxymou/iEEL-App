@@ -1,8 +1,27 @@
 import express from 'express';
 import pool from '../db/connection.js';
-import { body, validationResult } from 'express-validator';
+import { body, param, validationResult } from 'express-validator';
 
 const router = express.Router();
+
+// 🔒 Middleware de validation des erreurs
+const validate = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  next();
+};
+
+// 🔒 Validation du metadata JSONB (taille max 10KB)
+const validateMetadata = (value) => {
+  if (!value) return true;
+  const size = JSON.stringify(value).length;
+  if (size > 10240) { // 10KB max
+    throw new Error('Metadata trop volumineux (max 10KB)');
+  }
+  return true;
+};
 
 // GET /api/materiels - Récupérer tous les matériels
 router.get('/', async (req, res) => {
@@ -22,7 +41,10 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/materiels/:id - Récupérer un matériel par ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', [
+  param('id').isInt({ min: 1 }).withMessage('ID doit être un entier positif'),
+  validate
+], async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query(
@@ -47,15 +69,12 @@ router.get('/:id', async (req, res) => {
 
 // POST /api/materiels - Créer un nouveau matériel
 router.post('/', [
-  body('nom').notEmpty().withMessage('Le nom est requis'),
-  body('sous_category_id').isInt().withMessage('L\'ID de sous-catégorie doit être un entier')
+  body('nom').trim().notEmpty().withMessage('Le nom est requis'),
+  body('sous_category_id').isInt({ min: 1 }).withMessage('L\'ID de sous-catégorie doit être un entier positif'),
+  body('metadata').optional().isObject().custom(validateMetadata).withMessage('Metadata doit être un objet JSON valide'),
+  validate
 ], async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { nom, section, diametre, poids_au_metre, sous_category_id, metadata } = req.body;
 
     const result = await pool.query(
@@ -74,14 +93,13 @@ router.post('/', [
 
 // PUT /api/materiels/:id - Modifier un matériel
 router.put('/:id', [
-  body('nom').optional().notEmpty().withMessage('Le nom ne peut pas être vide')
+  param('id').isInt({ min: 1 }).withMessage('ID doit être un entier positif'),
+  body('nom').optional().trim().notEmpty().withMessage('Le nom ne peut pas être vide'),
+  body('sous_category_id').optional().isInt({ min: 1 }).withMessage('sous_category_id doit être un entier positif'),
+  body('metadata').optional().isObject().custom(validateMetadata).withMessage('Metadata doit être un objet JSON valide'),
+  validate
 ], async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { id } = req.params;
     const { nom, section, diametre, poids_au_metre, sous_category_id, metadata } = req.body;
 
@@ -136,7 +154,10 @@ router.put('/:id', [
 });
 
 // DELETE /api/materiels/:id - Supprimer un matériel
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', [
+  param('id').isInt({ min: 1 }).withMessage('ID doit être un entier positif'),
+  validate
+], async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query(

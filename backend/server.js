@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import multer from 'multer';
+import rateLimit from 'express-rate-limit';
 import pool from './db/connection.js';
 import categoriesRouter from './routes/categories.js';
 import sousCategoriesRouter from './routes/sousCategories.js';
@@ -9,6 +10,13 @@ import materielsRouter from './routes/materiels.js';
 import { exportCSV, importCSV } from './controllers/csvController.js';
 
 dotenv.config();
+
+// 🔒 VALIDATION CRITIQUE : Vérifier que DATABASE_URL est définie
+if (!process.env.DATABASE_URL) {
+  console.error('❌ ERREUR FATALE: DATABASE_URL non définie dans .env');
+  console.error('📝 Créez un fichier .env avec DATABASE_URL=postgresql://...');
+  process.exit(1);
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,8 +37,38 @@ const upload = multer({
   }
 });
 
+// 🔒 SÉCURITÉ : Configuration CORS sécurisée
+const allowedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',')
+  : ['http://localhost:5173', 'http://localhost:3000'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Autoriser les requêtes sans origin (comme Postman, curl)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Origine non autorisée par CORS'));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200
+}));
+
+// 🔒 SÉCURITÉ : Rate limiting contre les attaques DoS
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Max 100 requêtes par IP
+  message: { error: 'Trop de requêtes depuis cette IP, veuillez réessayer plus tard' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use('/api', limiter);
+
 // Middlewares
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
