@@ -44,6 +44,9 @@ export const exportCSV = async (req, res) => {
 
 // Import CSV - Importer des matériels depuis un fichier CSV
 export const importCSV = async (req, res) => {
+  // 🔒 SÉCURITÉ : Flag pour éviter double réponse HTTP (ERR_HTTP_HEADERS_SENT)
+  let responseSent = false;
+
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'Aucun fichier fourni' });
@@ -51,7 +54,6 @@ export const importCSV = async (req, res) => {
 
     const results = [];
     const errors = [];
-    let lineNumber = 0;
 
     // Parse le CSV depuis le buffer
     const readable = Readable.from(req.file.buffer.toString());
@@ -59,22 +61,30 @@ export const importCSV = async (req, res) => {
     readable
       .pipe(csvParser())
       .on('data', (data) => {
-        lineNumber++;
-        results.push({ ...data, lineNumber });
+        results.push(data);
       })
       .on('end', async () => {
+        if (responseSent) return; // 🔒 Éviter double réponse
+
+        // 🔒 TRANSACTION : Utiliser une transaction pour garantir l'atomicité
+        const client = await pool.connect();
         try {
+          await client.query('BEGIN');
+
           let imported = 0;
           let skipped = 0;
 
-          for (const row of results) {
+          for (let i = 0; i < results.length; i++) {
+            const row = results[i];
+            const lineNumber = i + 2; // +2 car ligne 1 = header, et index commence à 0
+
             try {
               const { nom, section, diametre, poids_au_metre, categorie, sous_categorie } = row;
 
               // Validation des champs requis
               if (!nom || !categorie || !sous_categorie) {
                 errors.push({
-                  line: row.lineNumber,
+                  line: lineNumber,
                   error: 'Champs requis manquants (nom, categorie, sous_categorie)',
                   data: row
                 });
@@ -82,15 +92,15 @@ export const importCSV = async (req, res) => {
                 continue;
               }
 
-              // Trouver ou créer la catégorie
-              let categoryResult = await pool.query(
+              // Trouver ou créer la catégorie (utiliser client au lieu de pool)
+              let categoryResult = await client.query(
                 'SELECT id FROM categories WHERE nom = $1',
                 [categorie]
               );
 
               let categoryId;
               if (categoryResult.rows.length === 0) {
-                const newCategory = await pool.query(
+                const newCategory = await client.query(
                   'INSERT INTO categories (nom) VALUES ($1) RETURNING id',
                   [categorie]
                 );
@@ -101,14 +111,14 @@ export const importCSV = async (req, res) => {
               }
 
               // Trouver ou créer la sous-catégorie
-              let sousCategoryResult = await pool.query(
+              let sousCategoryResult = await client.query(
                 'SELECT id FROM sous_categories WHERE nom = $1 AND category_id = $2',
                 [sous_categorie, categoryId]
               );
 
               let sousCategoryId;
               if (sousCategoryResult.rows.length === 0) {
-                const newSousCategory = await pool.query(
+                const newSousCategory = await client.query(
                   'INSERT INTO sous_categories (nom, category_id) VALUES ($1, $2) RETURNING id',
                   [sous_categorie, categoryId]
                 );
@@ -119,7 +129,7 @@ export const importCSV = async (req, res) => {
               }
 
               // Insérer le matériel
-              await pool.query(
+              await client.query(
                 `INSERT INTO materiels (nom, section, diametre, poids_au_metre, sous_category_id)
                  VALUES ($1, $2, $3, $4, $5)`,
                 [
@@ -133,9 +143,9 @@ export const importCSV = async (req, res) => {
 
               imported++;
             } catch (rowError) {
-              console.error(`Erreur ligne ${row.lineNumber}:`, rowError);
+              console.error(`Erreur ligne ${lineNumber}:`, rowError);
               errors.push({
-                line: row.lineNumber,
+                line: lineNumber,
                 error: rowError.message,
                 data: row
               });
@@ -143,6 +153,10 @@ export const importCSV = async (req, res) => {
             }
           }
 
+          // 🔒 COMMIT : Si tout s'est bien passé, valider la transaction
+          await client.query('COMMIT');
+
+          responseSent = true;
           res.json({
             message: 'Import CSV terminé',
             imported,
@@ -153,16 +167,33 @@ export const importCSV = async (req, res) => {
 
           console.log(`✅ Import CSV réussi: ${imported}/${results.length} matériels importés`);
         } catch (processError) {
+          // 🔒 ROLLBACK : En cas d'erreur, annuler toute la transaction
+          await client.query('ROLLBACK');
           console.error('Erreur lors du traitement du CSV:', processError);
-          res.status(500).json({ error: 'Erreur lors du traitement du CSV' });
+
+          if (!responseSent) {
+            responseSent = true;
+            res.status(500).json({ error: 'Erreur lors du traitement du CSV' });
+          }
+        } finally {
+          // Toujours libérer le client
+          client.release();
         }
       })
       .on('error', (error) => {
         console.error('Erreur lors de la lecture du CSV:', error);
-        res.status(500).json({ error: 'Erreur lors de la lecture du CSV' });
+
+        if (!responseSent) {
+          responseSent = true;
+          res.status(500).json({ error: 'Erreur lors de la lecture du CSV' });
+        }
       });
   } catch (error) {
     console.error('Erreur lors de l\'import CSV:', error);
-    res.status(500).json({ error: 'Erreur serveur lors de l\'import CSV' });
+
+    if (!responseSent) {
+      responseSent = true;
+      res.status(500).json({ error: 'Erreur serveur lors de l\'import CSV' });
+    }
   }
 };

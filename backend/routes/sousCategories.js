@@ -1,7 +1,17 @@
 import express from 'express';
+import { param, body, validationResult } from 'express-validator';
 import pool from '../db/connection.js';
 
 const router = express.Router();
+
+// 🔒 Middleware de validation des erreurs
+const validate = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  next();
+};
 
 // GET /api/sous-categories - Récupérer toutes les sous-catégories
 router.get('/', async (req, res) => {
@@ -20,7 +30,10 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/sous-categories/:id - Récupérer une sous-catégorie par ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', [
+  param('id').isInt({ min: 1 }).withMessage('ID doit être un entier positif'),
+  validate
+], async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query(
@@ -43,7 +56,10 @@ router.get('/:id', async (req, res) => {
 });
 
 // GET /api/sous-categories/:id/materiels - Récupérer les matériels d'une sous-catégorie
-router.get('/:id/materiels', async (req, res) => {
+router.get('/:id/materiels', [
+  param('id').isInt({ min: 1 }).withMessage('ID doit être un entier positif'),
+  validate
+], async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query(
@@ -58,13 +74,13 @@ router.get('/:id/materiels', async (req, res) => {
 });
 
 // POST /api/sous-categories - Créer une nouvelle sous-catégorie
-router.post('/', async (req, res) => {
+router.post('/', [
+  body('nom').trim().notEmpty().withMessage('Le nom est requis'),
+  body('category_id').isInt({ min: 1 }).withMessage('category_id doit être un entier positif'),
+  validate
+], async (req, res) => {
   try {
     const { nom, category_id } = req.body;
-
-    if (!nom || !category_id) {
-      return res.status(400).json({ error: 'Le nom et category_id sont requis' });
-    }
 
     const result = await pool.query(
       'INSERT INTO sous_categories (nom, category_id) VALUES ($1, $2) RETURNING *',
@@ -79,14 +95,15 @@ router.post('/', async (req, res) => {
 });
 
 // PUT /api/sous-categories/:id - Modifier une sous-catégorie
-router.put('/:id', async (req, res) => {
+router.put('/:id', [
+  param('id').isInt({ min: 1 }).withMessage('ID doit être un entier positif'),
+  body('nom').trim().notEmpty().withMessage('Le nom est requis'),
+  body('category_id').optional().isInt({ min: 1 }).withMessage('category_id doit être un entier positif'),
+  validate
+], async (req, res) => {
   try {
     const { id } = req.params;
     const { nom, category_id } = req.body;
-
-    if (!nom) {
-      return res.status(400).json({ error: 'Le nom est requis' });
-    }
 
     const result = await pool.query(
       'UPDATE sous_categories SET nom = $1, category_id = COALESCE($2, category_id) WHERE id = $3 RETURNING *',
@@ -105,7 +122,10 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE /api/sous-categories/:id - Supprimer une sous-catégorie
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', [
+  param('id').isInt({ min: 1 }).withMessage('ID doit être un entier positif'),
+  validate
+], async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query(

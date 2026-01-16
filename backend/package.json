@@ -20,7 +20,8 @@
     "multer": "^1.4.5-lts.1",
     "csv-parser": "^3.0.0",
     "json2csv": "^6.0.0-alpha.2",
-    "express-validator": "^7.0.1"
+    "express-validator": "^7.0.1",
+    "express-rate-limit": "^7.1.5"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

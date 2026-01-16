@@ -9,7 +9,32 @@ const Home = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // 🔒 Flag pour éviter setState après unmount (memory leak)
+    let mounted = true;
+
+    const fetchCategories = async () => {
+      try {
+        if (mounted) setLoading(true);
+        const response = await getCategories();
+        if (mounted) {
+          setCategories(response.data);
+        }
+      } catch (err) {
+        console.error('Erreur lors du chargement des catégories:', err);
+        if (mounted) {
+          setError('Impossible de charger les catégories');
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
     fetchCategories();
+
+    // Cleanup: marquer le composant comme unmounted
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const fetchCategories = async () => {

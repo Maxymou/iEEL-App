@@ -12,25 +12,37 @@ const SubCategories = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchData();
-  }, [id]);
+    // 🔒 Flag pour éviter setState après unmount (memory leak)
+    let mounted = true;
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [categoryRes, sousCategoriesRes] = await Promise.all([
-        getCategory(id),
-        getCategorySousCategories(id),
-      ]);
-      setCategory(categoryRes.data);
-      setSousCategories(sousCategoriesRes.data);
-    } catch (err) {
-      console.error('Erreur lors du chargement:', err);
-      setError('Impossible de charger les données');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const fetchData = async () => {
+      try {
+        if (mounted) setLoading(true);
+        const [categoryRes, sousCategoriesRes] = await Promise.all([
+          getCategory(id),
+          getCategorySousCategories(id),
+        ]);
+        if (mounted) {
+          setCategory(categoryRes.data);
+          setSousCategories(sousCategoriesRes.data);
+        }
+      } catch (err) {
+        console.error('Erreur lors du chargement:', err);
+        if (mounted) {
+          setError('Impossible de charger les données');
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchData();
+
+    // Cleanup: marquer le composant comme unmounted
+    return () => {
+      mounted = false;
+    };
+  }, [id]);
 
   if (loading) {
     return (

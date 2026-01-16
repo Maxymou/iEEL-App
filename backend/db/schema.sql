@@ -32,6 +32,11 @@ CREATE TABLE materiels (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 🔒 Contraintes UNIQUE pour éviter les doublons
+-- Note: LOWER() pour rendre la contrainte insensible à la casse
+CREATE UNIQUE INDEX idx_categories_nom_unique ON categories(LOWER(nom));
+CREATE UNIQUE INDEX idx_sous_categories_nom_category_unique ON sous_categories(LOWER(nom), category_id);
+
 -- Index pour améliorer les performances
 CREATE INDEX idx_sous_categories_category ON sous_categories(category_id);
 CREATE INDEX idx_materiels_sous_category ON materiels(sous_category_id);

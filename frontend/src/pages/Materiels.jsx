@@ -15,7 +15,36 @@ const Materiels = () => {
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
+    // 🔒 Flag pour éviter setState après unmount (memory leak)
+    let mounted = true;
+
+    const fetchData = async () => {
+      try {
+        if (mounted) setLoading(true);
+        const [sousCategoryRes, materielsRes] = await Promise.all([
+          getSousCategory(id),
+          getSousCategoryMateriels(id),
+        ]);
+        if (mounted) {
+          setSousCategory(sousCategoryRes.data);
+          setMateriels(materielsRes.data);
+        }
+      } catch (err) {
+        console.error('Erreur lors du chargement:', err);
+        if (mounted) {
+          setError('Impossible de charger les données');
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
     fetchData();
+
+    // Cleanup: marquer le composant comme unmounted
+    return () => {
+      mounted = false;
+    };
   }, [id]);
 
   const fetchData = async () => {
