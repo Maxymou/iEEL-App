@@ -7,14 +7,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Design tokens - Dark mode pro/tech
+        // Design tokens - Inspiré de l'image de référence (dark + accent néon vert)
         'bg-primary': '#020617',
-        'bg-surface': '#0F172A',
+        'bg-surface': '#0B1220',
         'bg-elevated': '#1E293B',
         'border-default': '#1E293B',
         'border-subtle': '#334155',
-        'primary': '#38BDF8',
-        'primary-hover': '#0EA5E9',
+        'primary': '#A3E635',
+        'primary-hover': '#84CC16',
         'secondary': '#6366F1',
         'text-main': '#E5E7EB',
         'text-muted': '#94A3B8',
@@ -28,8 +28,8 @@ export default {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       boxShadow: {
-        'glow-primary': '0 0 20px rgba(56, 189, 248, 0.15)',
-        'glow-primary-lg': '0 0 30px rgba(56, 189, 248, 0.25)',
+        'glow-primary': '0 0 20px rgba(163, 230, 53, 0.15)',
+        'glow-primary-lg': '0 0 30px rgba(163, 230, 53, 0.25)',
       },
       transitionDuration: {
         '150': '150ms',
